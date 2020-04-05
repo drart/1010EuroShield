@@ -9,6 +9,7 @@ Sketches
 
 - 1010KickDrum (4 on the floor)
 - 1010SynthDrumWithEffects (Work in Progress)
+![1010SynthDrumWithEffects Sketch Scheme](img/1010SynthDrumWithEffects.png)
 
 
 Tests

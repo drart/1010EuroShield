@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
-#include <SerialFlash.h>
+
 
 // GUItool: begin automatically generated code
 AudioSynthSimpleDrum     drum2;          //xy=63,308
@@ -51,8 +51,6 @@ int ledPins[ledPinCount] = { 3, 4, 5, 6 };
 int ledPos = 0;
 const int ledPin = 13; // teensy 3.6
 
-static uint32_t next;
-
 void handleNoteOn(byte channel, byte pitch, byte velocity) {
   drum1.noteOn();
   MIDI.sendNoteOn(pitch, velocity, channel);
@@ -61,15 +59,15 @@ void handleNoteOn(byte channel, byte pitch, byte velocity) {
 
 void setup() {
   AudioMemory(15);
-
-  next = millis() + 1000;
-
   AudioNoInterrupts();
 
   drum1.frequency(40);
   drum1.length(500);
   drum1.secondMix(0.80);
   drum1.pitchMod(0.45);
+
+  //drum1.frequency(400);
+  //drum1.length(500);
   
   sgtl5000_1.enable();
   sgtl5000_1.volume(0.9);
@@ -87,19 +85,18 @@ void setup() {
 
 }
 
+elapsedMillis kickit;
+
 void loop() {
 
-  if (millis() == next)
+  if (kickit >= 1000)
   {
-    next = millis() + 500;
-    drum1.frequency(400);
-    drum1.length(500);
+    kickit = 0;
+
     drum1.noteOn();
     digitalWrite(ledPin, HIGH);
-    advanceLED();
   } else {
     digitalWrite(ledPin, LOW);
-    advanceLED();
   }
 
 }
