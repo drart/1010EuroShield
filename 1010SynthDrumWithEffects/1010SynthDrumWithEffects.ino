@@ -1,7 +1,7 @@
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
-#include <SD.h>
+
 
 
 // GUItool: begin automatically generated code
@@ -45,6 +45,11 @@ AudioControlSGTL5000     sgtl5000_1;
 // This code is in the public domain.
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
+//MIDI_CREATE_DEFAULT_INSTANCE();
+
+#define GRANULAR_MEMORY_SIZE 12800  // enough for 290 ms at 44.1 kHz
+int16_t granularMemory[GRANULAR_MEMORY_SIZE];
+
 
 #define ledPinCount 4
 int ledPins[ledPinCount] = { 3, 4, 5, 6 };
@@ -66,8 +71,26 @@ void setup() {
   drum1.secondMix(0.80);
   drum1.pitchMod(0.45);
 
+
+  mixer1.gain(0, 1);
+  mixer1.gain(1, 0);
+  mixer1.gain(2, 3);
+  mixer1.gain(3, 3);
+  reverb1.reverbTime(20); // max 0.5
+  filter1.frequency(200);
+  filter1.resonance(0.97);
+  
   //drum1.frequency(400);
   //drum1.length(500);
+
+
+  mixer2.gain(0,1);
+  bitcrusher1.bits(8);
+  bitcrusher1.sampleRate(20000);
+
+  // THROWS AN ERROR
+  //granular1.begin(granularMemory, GRANULAR_MEMORY_SIZE);
+
   
   sgtl5000_1.enable();
   sgtl5000_1.volume(0.9);
@@ -94,9 +117,11 @@ void loop() {
     kickit = 0;
 
     drum1.noteOn();
-    digitalWrite(ledPin, HIGH);
+    drum2.noteOn();
+    MIDI.sendNoteOn(36,127,10);
+   // digitalWrite(ledPin, HIGH);
   } else {
-    digitalWrite(ledPin, LOW);
+    //digitalWrite(ledPin, LOW);
   }
 
 }
